@@ -2,7 +2,7 @@
 
 An offline Class 10 revision companion built around the supplied syllabus.
 
-## What's new in v1.1
+## What's new in v1.2
 - New app identity: **SMT**
 - Custom launcher logo (book + check)
 - Daily revision goal
