@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#f7f7fb">
+<title>Revision Tracker</title>
+<style>
+:root{
+  --bg:#f7f7fb; --surface:#fff; --ink:#171722; --muted:#747481;
+  --line:#e9e9f0; --accent:#6756d9; --accent2:#8a78ef;
+  --accent-soft:#eeebff; --success:#2e9b67; --warning:#d58b25;
+  --shadow:0 10px 30px rgba(35,31,66,.08); --radius:22px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{padding-bottom:88px}
+button{font:inherit;border:0;background:none;color:inherit}
+.app{max-width:720px;margin:auto;padding:18px 16px 24px}
+.top{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 20px}
+.brand{display:flex;align-items:center;gap:11px}
+.brand-mark{width:42px;height:42px;border-radius:14px;background:var(--accent);display:grid;place-items:center;color:#fff;box-shadow:0 8px 18px rgba(103,86,217,.25)}
+.brand-mark svg{width:23px;height:23px}
+h1{font-size:22px;line-height:1.1;margin:0;font-weight:780;letter-spacing:-.5px}
+.sub{font-size:12px;color:var(--muted);margin-top:4px}
+.icon-btn{width:42px;height:42px;border:1px solid var(--line);background:var(--surface);border-radius:14px;display:grid;place-items:center}
+.icon-btn svg{width:19px;height:19px;color:var(--muted)}
+.hero{background:linear-gradient(135deg,#5f50ce,#806ee8);border-radius:28px;padding:21px;color:white;box-shadow:0 14px 34px rgba(103,86,217,.24);position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:170px;height:170px;border:1px solid rgba(255,255,255,.12);border-radius:50%;right:-70px;top:-65px}
+.hero-row{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.eyebrow{font-size:12px;opacity:.78;font-weight:650;letter-spacing:.2px}
+.hero h2{font-size:31px;margin:5px 0 4px;letter-spacing:-1px}
+.hero p{margin:0;font-size:13px;opacity:.82}
+.ring{width:86px;height:86px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#fff var(--p),rgba(255,255,255,.18) 0);position:relative;flex:0 0 auto}
+.ring:before{content:"";position:absolute;inset:8px;border-radius:50%;background:#6a58d4}
+.ring span{position:relative;font-weight:800;font-size:17px}
+.next{margin-top:18px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);padding:12px 13px;border-radius:16px;display:flex;justify-content:space-between;align-items:center}
+.next-left{display:flex;gap:10px;align-items:center}
+.next svg{width:18px}
+.next-title{font-weight:700;font-size:13px}
+.next-meta{font-size:11px;opacity:.72;margin-top:2px}
+.next-days{text-align:right;font-weight:800;font-size:14px}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:25px 3px 11px}
+.section-title h3{font-size:16px;margin:0;letter-spacing:-.2px}
+.section-title button{font-size:12px;color:var(--accent);font-weight:700}
+.subjects{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:15px;box-shadow:var(--shadow);cursor:pointer}
+.card:active{transform:scale(.985)}
+.card-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.subject-icon{width:37px;height:37px;border-radius:12px;background:var(--accent-soft);display:grid;place-items:center;color:var(--accent)}
+.subject-icon svg{width:19px;height:19px}
+.pct{font-weight:800;font-size:14px}
+.card h4{margin:12px 0 3px;font-size:14px}
+.card .date{font-size:10px;color:var(--muted)}
+.bar{height:6px;border-radius:20px;background:#efeff4;margin-top:12px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:20px}
+.progress-label{display:flex;justify-content:space-between;margin-top:7px;font-size:10px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:13px}
+.stat strong{font-size:18px;display:block}
+.stat span{font-size:10px;color:var(--muted)}
+.screen{display:none}
+.screen.active{display:block}
+.back{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted);margin:2px 0 16px}
+.back svg{width:18px}
+.subject-banner{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:17px;box-shadow:var(--shadow);margin-bottom:13px}
+.subject-banner-top{display:flex;justify-content:space-between;gap:12px}
+.subject-banner h2{margin:0;font-size:21px}
+.subject-banner p{margin:5px 0 0;color:var(--muted);font-size:11px}
+.big-pct{font-size:22px;font-weight:850;color:var(--accent)}
+.detail-bar{height:8px;background:#eeeeF4;border-radius:20px;margin-top:14px;overflow:hidden}
+.detail-bar i{height:100%;display:block;background:var(--accent);border-radius:20px}
+.lang-switch{display:flex;background:#f0eff6;border-radius:12px;padding:3px;margin:13px 0}
+.lang-switch button{flex:1;padding:8px;border-radius:9px;font-size:12px;font-weight:700;color:var(--muted)}
+.lang-switch button.active{background:#fff;color:var(--accent);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.group{margin-top:16px}
+.group-title{display:flex;justify-content:space-between;align-items:center;margin:0 4px 8px}
+.group-title strong{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.group-title small{font-size:10px;color:var(--muted)}
+.topic{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:12px;margin:6px 0;min-height:50px}
+.check{width:22px;height:22px;border:2px solid #d7d6df;border-radius:7px;display:grid;place-items:center;flex:0 0 auto;cursor:pointer}
+.check svg{width:14px;height:14px;display:none}
+.topic.done .check{background:var(--accent);border-color:var(--accent);color:#fff}
+.topic.done .check svg{display:block}
+.topic.done .topic-name{text-decoration:line-through;color:#9999a3}
+.topic-name{font-size:13px;line-height:1.3}
+.topic-meta{font-size:9px;color:var(--muted);margin-top:3px}
+.choice-badge{font-size:9px;background:#fff5df;color:#a76b12;padding:4px 6px;border-radius:7px;margin-left:auto;white-space:nowrap}
+.periodic{opacity:.56}
+.periodic .check{cursor:not-allowed}
+.action-row{display:flex;gap:9px;margin:16px 0}
+.action{flex:1;padding:12px;border-radius:14px;font-size:12px;font-weight:750;border:1px solid var(--line);background:var(--surface)}
+.action.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.bottom{position:fixed;z-index:10;bottom:0;left:0;right:0;background:rgba(255,255,255,.94);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:9px 12px calc(9px + env(safe-area-inset-bottom));display:flex;justify-content:center}
+.bottom-inner{width:min(720px,100%);display:flex;justify-content:space-around}
+.nav{display:flex;flex-direction:column;align-items:center;gap:4px;color:#9695a0;font-size:9px;font-weight:700;padding:3px 18px}
+.nav.active{color:var(--accent)}
+.nav svg{width:20px;height:20px}
+.empty{padding:30px 10px;text-align:center;color:var(--muted);font-size:12px}
+@media(min-width:560px){.subjects{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div id="home" class="screen active"></div>
+  <div id="subject" class="screen"></div>
+</div>
+
+<div class="bottom">
+  <div class="bottom-inner">
+    <button class="nav active" id="navHome">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 10.8 12 3l9 7.8v9.2a1 1 0 0 1-1 1h-5.5v-6h-5v6H4a1 1 0 0 1-1-1z"/></svg>
+      Home
+    </button>
+    <button class="nav" id="navSubjects">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Subjects
+    </button>
+    <button class="nav" id="navReset">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v5h5"/></svg>
+      Reset
+    </button>
+  </div>
+</div>
+
+<script>
+const EXAMS = {
+  "Mathematics":"2026-10-19T11:00:00",
+  "Urdu/Hindi":"2026-10-22T11:00:00",
+  "Science":"2026-10-27T11:00:00",
+  "English":"2026-10-31T11:00:00",
+  "Social Science":"2026-11-04T11:00:00"
+};
+
+const SUBJECTS = {
+Mathematics:{
+  icon:"math", marks:"80 theory + 20 internal", groups:[
+    ["Unit I — Number Systems",["Real Numbers"]],
+    ["Unit II — Algebra",["Polynomials","Pair of Linear Equations in Two Variables","Quadratic Equations","Arithmetic Progressions"]],
+    ["Unit III — Coordinate Geometry",["Coordinate Geometry"]],
+    ["Unit IV — Geometry",["Triangles","Circles"]],
+    ["Unit V — Trigonometry",["Introduction to Trigonometry","Trigonometric Identities","Heights and Distances"]],
+    ["Unit VI — Mensuration",["Areas Related to Circles","Surface Areas and Volumes"]],
+    ["Unit VII — Statistics & Probability",["Statistics","Probability"]]
+  ]},
+"Urdu/Hindi":{
+  icon:"language", marks:"80 theory + 20 internal", languages:{
+    Urdu:[
+      ["نثر / Prose",["سیر چوتھے درویش کی","اور مزاج دار آگئی","عبرت","آسمان، پھول اور لبو","حالی","خوشامد"]],
+      ["غزلیات / Ghazaliat",["ہمارے آگے ترا جب کسو نے نام لیا","دہن پر ہیں اُن کے گلاں کیسے کیسے","ابن مریم ہوا کرے کوئی","تمناؤں میں الجھایا گیا ہوں","دنیا میری بلا جانے مہنگی ہے یا سستی ہے","ہر ایک رنگ میں کانپیں گے ہم سراہی بھی","کسی کو معلوم ملے خاک میں منظر کتنے","ایک بھی موسم میرے اندر نہ تھا","کتنی بھوکی ہے، کتنی پیاسی ہے"]],
+      ["منظومات / Manzomat",["مفلسی","رامائن کا ایک سین","اولوالعزمی","جگنو","شکستِ انتظار"]],
+      ["دیگر اصناف",["رباعیات","قصیدہ","نعت","مرثیہ"]]
+    ],
+    Hindi:[
+      ["काव्य / Literature",["साखी — कबीर","दोहे — बिहारी","जम्मू-कश्मीर व लद्दाख में हिन्दी","हमारा प्यारा भारत वर्ष — जयशंकर प्रसाद","शक्ति की महिमा — डॉ अजय कुमार सिंह","कैकेयी का अनुताप — मैथिलीशरण गुप्त","पर्वत प्रदेश में पावस — सुमित्रानंदन पंत","मधुर-मधुर मेरे दीपक जल — महादेवी वर्मा","सपनों के-से दिन","कश्मीर का लोकनाटक बॉड पाथर","मानवता — डॉ बंशी लाल शर्मा","जम्मू की चित्रकला","हिन्दी जन की बोली — गिरिजा कुमार माथुर","भिक्षुक — सूर्यकांत त्रिपाठी निराला","बड़े भाई साहब — प्रेमचंद","हरिहर काका"]],
+      ["भाषा कौशल",["व्याकरण","सारांश लेखन","निबंध लेखन","पत्र लेखन","अपठित गद्यांश"]]
+    ]
+  }
+},
+Science:{
+  icon:"science", marks:"80 theory + 20 internal", groups:[
+    ["Physics — 26 marks",["Light — Reflection and Refraction","The Human Eye and the Colorful World","Electricity","Magnetic Effects of Current"]],
+    ["Chemistry — 26 marks",["Chemical Reactions and Equations","Carbon and its Compounds","Metals and Non-metals","Acids, Bases and Salts"]],
+    ["Biology — 28 marks",["Life Processes","Control and Co-ordination","How do Organism Reproduce","Heredity","Our Environment"]]
+  ]},
+English:{
+  icon:"english", marks:"80 theory + 20 internal", groups:[
+    ["Prose",["Footprints without Feet","An Excellent Father","From the Diary of a Young Girl","Long Walk to Freedom","The Sermon at Benares","Pappachi’s Moth","The Merchant of Venice"]],
+    ["Poetry",["Prayer","Miracles","When You Are Old","Snowdrop","My Mother at Sixty-six","An Evening Wet with Rain","The Tale of Custard the Dragon","Last Lesson of the Afternoon"]],
+    ["Short Stories",["The Necklace","Abhiley","The Servant","Dusk"]],
+    ["Play",["The Proposal"]],
+    ["Reading Comprehension — 15 marks",["Seen stanza","Unseen passage","Visual / statistical-data based question"]],
+    ["Grammar — 10 marks",["Modals","Articles","Relative Clauses","Tenses","Narration","Punctuation"]],
+    ["Writing Skills — 25 marks",["Dialogue writing","Notice writing","Message writing","Formal / informal letter","Speech / article / paragraph","Creative story"]]
+  ]},
+"Social Science":{
+  icon:"sst", marks:"80 theory + 20 internal", groups:[
+    ["History — 25 marks",[
+      "The Rise of Nationalism in Europe","Nationalism in India","The Making of a Global World","The Age of Industrialization","Print Culture and the Modern World","Post Independence Era: Jammu and Kashmir on the path of Modernisation"
+    ]],
+    ["Geography — 20 marks",[
+      "Resources and Development","Forest and Wildlife","Water Resources","Agriculture","Minerals and Energy Resources","Manufacturing Industries","Life Lines of National Economy"
+    ]],
+    ["Political Science — 20 marks",[
+      "Power Sharing","Federalism","Gender, Religion and Caste","Political Parties","Outcomes of Democracy","The Jammu and Kashmir Reorganization Act, 2019"
+    ]],
+    ["Economics / Disaster Management — 15 marks",[
+      "Understanding J & K Economy","Employment Generation","Protecting Ourselves from Disasters","Financial Literacy / Stock Market Operations","Road Safety Education"
+    ]],
+    ["Periodic-test-only topics",[
+      "Forest and Wildlife","Water Resources","Financial Literacy / Stock Market Operations","Road Safety Education","Cooperative Movement"
+    ]]
+  ]}
+};
+
+const PERIODIC = new Set([
+  "Forest and Wildlife","Water Resources","Financial Literacy / Stock Market Operations","Road Safety Education","Cooperative Movement"
+]);
+
+let current = "Mathematics";
+let language = localStorage.getItem("language") || "Urdu";
+let done = JSON.parse(localStorage.getItem("revision_done") || "{}");
+
+// User had already completed the first two Maths chapters.
+if (!Object.keys(done).length) {
+  done["Mathematics::Real Numbers"] = true;
+  done["Mathematics::Polynomials"] = true;
+  save();
+}
+
+function save(){localStorage.setItem("revision_done",JSON.stringify(done));localStorage.setItem("language",language)}
+
+function icon(type){
+  const common='viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
+  const paths={
+    math:`<svg ${common}><path d="M5 19 19 5"/><path d="M7 7h.01M17 17h.01"/><path d="M3 3h18v18H3z"/></svg>`,
+    language:`<svg ${common}><path d="M4 5h8M8 5c0 5-2 8-5 10M5 10c2 2 4 3 7 4"/><path d="M14 14h6M17 11l-3 8m2-3h4"/></svg>`,
+    science:`<svg ${common}><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M8 16h8"/></svg>`,
+    english:`<svg ${common}><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3-3z"/><path d="M5 4v13M9 8h6M9 12h5"/></svg>`,
+    sst:`<svg ${common}><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.2 2.4 3.3 5.2 3.3 8.5S14.2 18.1 12 20.5C9.8 18.1 8.7 15.3 8.7 12S9.8 5.9 12 3.5z"/></svg>`,
+    calendar:`<svg ${common}><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>`,
+    check:`<svg ${common}><path d="m5 12 4 4L19 6"/></svg>`,
+    back:`<svg ${common}><path d="m15 18-6-6 6-6"/></svg>`,
+    settings:`<svg ${common}><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z"/><path d="M19 13.5v-3l-2-.6a6 6 0 0 0-.7-1.7l.9-1.8-2.1-2.1-1.8.9a6 6 0 0 0-1.7-.7L11 2.5H8l-.6 2a6 6 0 0 0-1.7.7l-1.8-.9-2.1 2.1.9 1.8a6 6 0 0 0-.7 1.7l-2 .6v3l2 .6c.2.6.4 1.2.7 1.7l-.9 1.8 2.1 2.1 1.8-.9c.5.3 1.1.5 1.7.7l.6 2h3l.6-2c.6-.2 1.2-.4 1.7-.7l1.8.9 2.1-2.1-.9-1.8c.3-.5.5-1.1.7-1.7z"/></svg>`
+  };
+  return paths[type]||"";
+}
+
+function subjectGroups(name){
+  const s=SUBJECTS[name];
+  return name==="Urdu/Hindi" ? s.languages[language] : s.groups;
+}
+function slotKey(name, topic){return name+"::"+topic}
+function allTopics(name){
+  const out=[]; subjectGroups(name).forEach(([g,topics])=>topics.forEach(t=>out.push({g,t}))); return out;
+}
+function countedTopics(name){
+  return allTopics(name).filter(x=>!(name==="Social Science" && PERIODIC.has(x.t)));
+}
+function progress(name){
+  const a=countedTopics(name);
+  // For SST, Global World OR Age of Industrialization is one syllabus choice slot.
+  if(name==="Social Science"){
+    const normal=a.filter(x=>x.t!=="The Making of a Global World" && x.t!=="The Age of Industrialization");
+    const choiceDone=done[slotKey(name,"The Making of a Global World")]||done[slotKey(name,"The Age of Industrialization")];
+    const total=normal.length+1, complete=normal.filter(x=>done[slotKey(name,x.t)]).length+(choiceDone?1:0);
+    return {complete,total,pct:Math.round(complete/total*100)};
+  }
+  const complete=a.filter(x=>done[slotKey(name,x.t)]).length;
+  return {complete,total:a.length,pct:a.length?Math.round(complete/a.length*100):0};
+}
+function overall(){
+  let c=0,t=0; subjects().forEach(s=>{const p=progress(s);c+=p.complete;t+=p.total});
+  return {c,t,p:t?Math.round(c/t*100):0};
+}
+function subjects(){return Object.keys(SUBJECTS)}
+function nextExam(){
+  const now=new Date();
+  return subjects().map(s=>({s,d:new Date(EXAMS[s])})).filter(x=>x.d>now).sort((a,b)=>a.d-b.d)[0]||null;
+}
+function daysUntil(d){return Math.max(0,Math.ceil((d-new Date())/86400000))}
+function dateText(s){return new Date(EXAMS[s]).toLocaleDateString(undefined,{day:"numeric",month:"short"})}
+
+function renderHome(){
+  const o=overall(), nx=nextExam();
+  const ring=`style="--p:${o.p*3.6}deg"`;
+  document.getElementById("home").innerHTML=`
+    <div class="top">
+      <div class="brand"><div class="brand-mark">${icon("check")}</div><div><h1>Revision Tracker</h1><div class="sub">Class 10 · Annual Examination 2026</div></div></div>
+      <button class="icon-btn" id="infoBtn" aria-label="Information">${icon("settings")}</button>
+    </div>
+    <section class="hero">
+      <div class="hero-row">
+        <div><div class="eyebrow">TOTAL SYLLABUS</div><h2>${o.p}%</h2><p>${o.c} of ${o.t} tracked slots completed</p></div>
+        <div class="ring" ${ring}><span>${o.p}%</span></div>
+      </div>
+      ${nx?`<div class="next"><div class="next-left">${icon("calendar")}<div><div class="next-title">Next exam · ${nx.s}</div><div class="next-meta">${dateText(nx.s)} · 11:00 AM</div></div></div><div class="next-days">${daysUntil(nx.d)}<div class="next-meta">days</div></div></div>`:""}
+    </section>
+
+    <div class="section-title"><h3>Subjects</h3><button id="openSubjects">View all</button></div>
+    <div class="subjects">
+      ${subjects().map(s=>{
+        const p=progress(s);
+        return `<div class="card" data-s="${s}">
+          <div class="card-head"><div class="subject-icon">${icon(SUBJECTS[s].icon)}</div><div class="pct">${p.pct}%</div></div>
+          <h4>${s}</h4><div class="date">${dateText(s)} · 11:00 AM</div>
+          <div class="bar"><i style="width:${p.pct}%"></i></div>
+          <div class="progress-label"><span>${p.complete}/${p.total}</span><span>${SUBJECTS[s].marks}</span></div>
+        </div>`;
+      }).join("")}
+    </div>
+
+    <div class="section-title"><h3>At a glance</h3></div>
+    <div class="stats">
+      <div class="stat"><strong>${o.c}</strong><span>Completed</span></div>
+      <div class="stat"><strong>${o.t-o.c}</strong><span>Remaining</span></div>
+      <div class="stat"><strong>${subjects().length}</strong><span>Subjects</span></div>
+    </div>
+  `;
+  document.querySelectorAll(".card").forEach(c=>c.onclick=()=>openSubject(c.dataset.s));
+  document.getElementById("openSubjects").onclick=()=>openSubject(subjects()[0]);
+  document.getElementById("infoBtn").onclick=()=>alert("Revision Tracker\\n\\nProgress is stored locally on this phone.\\n\\nSyllabus data is based on the syllabus PDF supplied in this chat. Periodic-test-only topics are excluded from board completion. SST's Global World / Age of Industrialization choice counts as one slot.");
+}
+
+function renderSubject(){
+  const name=current, p=progress(name);
+  const groups=subjectGroups(name);
+  document.getElementById("subject").innerHTML=`
+    <button class="back" id="back">${icon("back")} All subjects</button>
+    <div class="subject-banner">
+      <div class="subject-banner-top"><div><h2>${name}</h2><p>${dateText(name)} · 11:00 AM · ${SUBJECTS[name].marks}</p></div><div class="big-pct">${p.pct}%</div></div>
+      <div class="detail-bar"><i style="width:${p.pct}%"></i></div>
+      <div class="progress-label"><span>${p.complete} completed</span><span>${p.total-p.complete} remaining</span></div>
+    </div>
+    ${name==="Urdu/Hindi"?`<div class="lang-switch"><button class="${language==="Urdu"?"active":""}" data-lang="Urdu">Urdu</button><button class="${language==="Hindi"?"active":""}" data-lang="Hindi">Hindi</button></div>`:""}
+    ${groups.map(([g,topics])=>`
+      <div class="group">
+        <div class="group-title"><strong>${g}</strong><small>${topics.length} items</small></div>
+        ${topics.map(t=>{
+          const periodic=(name==="Social Science"&&PERIODIC.has(t));
+          let is=!!done[slotKey(name,t)];
+          let choice=(name==="Social Science"&&(t==="The Making of a Global World"||t==="The Age of Industrialization"));
+          if(choice && (done[slotKey(name,"The Making of a Global World")]||done[slotKey(name,"The Age of Industrialization")])) is=true;
+          return `<div class="topic ${is?"done":""} ${periodic?"periodic":""}" data-topic="${encodeURIComponent(t)}">
+            <button class="check" ${periodic?"disabled":""}>${icon("check")}</button>
+            <div><div class="topic-name">${t}</div><div class="topic-meta">${periodic?"Periodic test only":choice?"Choice topic — one of two":"Tap to mark revised"}</div></div>
+            ${choice?`<span class="choice-badge">CHOICE</span>`:""}
+          </div>`;
+        }).join("")}
+      </div>`).join("")}
+    <div class="action-row">
+      <button class="action primary" id="checkAll">Mark all complete</button>
+      <button class="action" id="clearSubject">Clear subject</button>
+    </div>
+  `;
+  document.getElementById("back").onclick=()=>showHome();
+  document.querySelectorAll(".lang-switch button").forEach(b=>b.onclick=()=>{language=b.dataset.lang;save();renderSubject()});
+  document.querySelectorAll(".topic").forEach(row=>{
+    row.onclick=()=>{
+      const t=decodeURIComponent(row.dataset.topic);
+      if(name==="Social Science"&&PERIODIC.has(t)) return;
+      if(name==="Social Science"&&(t==="The Making of a Global World"||t==="The Age of Industrialization")){
+        const other=t==="The Making of a Global World"?"The Age of Industrialization":"The Making of a Global World";
+        if(done[slotKey(name,t)]) delete done[slotKey(name,t)];
+        else {delete done[slotKey(name,other)];done[slotKey(name,t)]=true;}
+      } else {
+        const k=slotKey(name,t); if(done[k]) delete done[k]; else done[k]=true;
+      }
+      save();renderSubject();
+    };
+  });
+  document.getElementById("checkAll").onclick=()=>{
+    countedTopics(name).forEach(x=>done[slotKey(name,x.t)]=true);
+    if(name==="Social Science"){delete done[slotKey(name,"The Age of Industrialization")];done[slotKey(name,"The Making of a Global World")]=true;}
+    save();renderSubject();
+  };
+  document.getElementById("clearSubject").onclick=()=>{
+    allTopics(name).forEach(x=>delete done[slotKey(name,x.t)]);
+    save();renderSubject();
+  };
+}
+
+function showHome(){
+  current="Mathematics";
+  document.getElementById("home").classList.add("active");
+  document.getElementById("subject").classList.remove("active");
+  document.getElementById("navHome").classList.add("active");
+  document.getElementById("navSubjects").classList.remove("active");
+  renderHome();
+}
+function openSubject(name){
+  current=name;
+  document.getElementById("home").classList.remove("active");
+  document.getElementById("subject").classList.add("active");
+  document.getElementById("navHome").classList.remove("active");
+  document.getElementById("navSubjects").classList.add("active");
+  renderSubject();
+}
+document.getElementById("navHome").onclick=showHome;
+document.getElementById("navSubjects").onclick=()=>openSubject(subjects()[0]);
+document.getElementById("navReset").onclick=()=>{
+  if(confirm("Reset every subject's progress?")){done={};done["Mathematics::Real Numbers"]=true;done["Mathematics::Polynomials"]=true;save();showHome();}
+};
+renderHome();
+</script>
+</body>
+</html>
